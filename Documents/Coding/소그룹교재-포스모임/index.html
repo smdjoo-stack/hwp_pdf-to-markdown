@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>포스 소그룹 교재 아카이브</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="background-elements">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header glass-panel">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon"><i class="ph-fill ph-books"></i></div>
+                    <div class="logo-text">
+                        <h1>Archive</h1>
+                        <p>포스 모임 소그룹</p>
+                    </div>
+                </div>
+                <button class="icon-btn search-btn"><i class="ph ph-magnifying-glass"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-title">
+                <h2>최신 교재</h2>
+                <p>새로 업데이트된 소그룹 나눔 자료입니다.</p>
+            </div>
+
+            <div id="archive-list" class="archive-list">
+                <!-- Cards injected here by JS -->
+                <div class="loading-skeleton"></div>
+                <div class="loading-skeleton"></div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer glass-panel">
+            <p>© 2026 포스 모임. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
