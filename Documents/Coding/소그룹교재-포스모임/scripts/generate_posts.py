@@ -51,12 +51,12 @@ def extract_info(filepath):
     return {
         "title": html_title if html_title else title_from_file,
         "description": title_from_file, # Use filename part as a subtitle/description
-        "path": f"교재/{encoded_filename}",
+        "path": f"materials/{encoded_filename}",
         "date": date_str
     }
 
 def main():
-    target_dir = "교재"
+    target_dir = "materials"
     output_file = "data/posts.js"
     
     if not os.path.exists(target_dir):

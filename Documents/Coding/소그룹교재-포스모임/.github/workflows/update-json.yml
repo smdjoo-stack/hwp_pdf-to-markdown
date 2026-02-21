@@ -3,7 +3,7 @@ name: Generate Posts JSON
 on:
   push:
     paths:
-      - '교재/**'
+      - 'materials/**'
   workflow_dispatch:
 
 jobs:
@@ -25,5 +25,5 @@ jobs:
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-generate posts.js based on 교재 folder updates"
+          commit_message: "Auto-generate posts.js based on materials folder updates"
           file_pattern: "data/posts.js"
