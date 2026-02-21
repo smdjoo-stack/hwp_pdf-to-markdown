@@ -3,6 +3,8 @@ import json
 import re
 from datetime import datetime
 import glob
+import urllib.parse
+import unicodedata
 
 def strip_html_tags(text):
     return re.sub(r'<[^>]+>', '', text)
@@ -40,16 +42,22 @@ def extract_info(filepath):
     # Try to get better title from inside the HTML
     html_title = get_title_from_html(filepath)
     
+    # Normalize Mac's NFD Korean characters to NFC standard before encoding
+    nfc_filename = unicodedata.normalize('NFC', filename)
+    
+    # Safely encode the filename for web URL usage (fixes Github Pages 404)
+    encoded_filename = urllib.parse.quote(nfc_filename)
+    
     return {
         "title": html_title if html_title else title_from_file,
         "description": title_from_file, # Use filename part as a subtitle/description
-        "path": f"교재/{filename}",
+        "path": f"교재/{encoded_filename}",
         "date": date_str
     }
 
 def main():
     target_dir = "교재"
-    output_file = "data/posts.json"
+    output_file = "data/posts.js"
     
     if not os.path.exists(target_dir):
         print(f"Directory '{target_dir}' not found.")
@@ -66,7 +74,9 @@ def main():
     posts.sort(key=lambda x: x['date'], reverse=True)
     
     with open(output_file, 'w', encoding='utf-8') as f:
+        f.write("const postsData = ")
         json.dump(posts, f, ensure_ascii=False, indent=2)
+        f.write(";\n")
         
     print(f"Generated {output_file} successfully with {len(posts)} entries.")
 

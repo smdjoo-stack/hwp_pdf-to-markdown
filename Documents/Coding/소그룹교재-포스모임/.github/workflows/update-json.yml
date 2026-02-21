@@ -19,11 +19,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Generate posts.json
+      - name: Generate posts.js
         run: python scripts/generate_posts.py
 
       - name: Commit and Push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Auto-generate posts.json based on 교재 folder updates"
-          file_pattern: "data/posts.json"
+          commit_message: "Auto-generate posts.js based on 교재 folder updates"
+          file_pattern: "data/posts.js"

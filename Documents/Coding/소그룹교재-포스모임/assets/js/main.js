@@ -15,29 +15,27 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    // Fetch data from posts.json
-    // Using a cache-busting query parameter in development helps if you test locally
-    fetch('data/posts.json?t=' + new Date().getTime())
-        .then(response => response.json())
-        .then(posts => {
-            allPosts = posts;
+    // Use the global postsData variable instead of fetch() to avoid local file CORS issues
+    try {
+        if (typeof postsData !== 'undefined') {
+            allPosts = postsData;
 
             // Sort by date descending (newest first)
-            // Assuming date format is YYYY-MM-DD
             allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
-
             renderPosts(allPosts);
-        })
-        .catch(err => {
-            console.error('Error fetching posts:', err);
-            archiveList.innerHTML = `
-                <div class="empty-state">
-                    <i class="ph ph-warning-circle" style="font-size: 32px; margin-bottom: 12px; color: var(--accent-secondary);"></i>
-                    <p>데이터를 불러오는 데 실패했습니다.</p>
-                    <p style="font-size: 12px; margin-top: 8px; opacity: 0.7;">posts.json 파일이 올바른 경로에 있는지 확인해주세요.</p>
-                </div>
-            `;
-        });
+        } else {
+            throw new Error("postsData is not defined");
+        }
+    } catch (err) {
+        console.error('Error loading posts:', err);
+        archiveList.innerHTML = `
+            <div class="empty-state">
+                <i class="ph ph-warning-circle" style="font-size: 32px; margin-bottom: 12px; color: var(--accent-secondary);"></i>
+                <p>데이터를 불러오는 데 실패했습니다.</p>
+                <p style="font-size: 12px; margin-top: 8px; opacity: 0.7;">index.html 파일에 data/posts.js가 올바르게 연결되어 있는지 확인해주세요.</p>
+            </div>
+        `;
+    }
 
     function renderPosts(posts) {
         archiveList.innerHTML = ''; // Clear loading skeletons
@@ -57,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const monthStr = dateObj ? dateObj.month : 'M';
             const dayStr = dateObj ? dateObj.day : 'D';
 
-            // For older posts format support or missing description
             const description = post.description || post.chapter || '포스 모임 소그룹 교재입니다.';
 
             const cardHTML = `
