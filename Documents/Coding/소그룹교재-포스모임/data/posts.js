@@ -1,5 +1,11 @@
 const postsData = [
   {
+    "title": "약속 위에 굳게 서는 삶",
+    "description": "20260307",
+    "path": "materials/20260307.html",
+    "date": "2026-03-07"
+  },
+  {
     "title": "제자 시리즈: 말씀에 순종하는 사람 - 논리를 뛰어넘는 순종",
     "description": "20260222",
     "path": "materials/20260222.html",
