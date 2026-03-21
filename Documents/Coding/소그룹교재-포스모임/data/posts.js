@@ -1,5 +1,11 @@
 const postsData = [
   {
+    "title": "우리 교회 비전과 이름 정하기",
+    "description": "20260322",
+    "path": "materials/20260322.html",
+    "date": "2026-03-22"
+  },
+  {
     "title": "약속 위에 굳게 서는 삶",
     "description": "20260307",
     "path": "materials/20260307.html",
