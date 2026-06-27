@@ -1,188 +1,80 @@
-# HWP to Markdown Converter
+# 📂 HWP/PDF → Markdown 일괄 변환기 (macOS & Windows 지원)
 
-한글 문서(.hwp)를 마크다운(.md) 형식으로 변환하는 웹 애플리케이션입니다.
+한글 문서(.hwp) 및 PDF 문서(.pdf)들을 일괄적으로 마크다운(.md) 양식으로 깨끗하게 변환해 주는 로컬 웹 애플리케이션입니다. (Obsidian 보관소 등으로 손쉽게 가져갈 수 있습니다.)
 
-![HWP to Markdown](https://img.shields.io/badge/HWP-to-Markdown-blue)
-![Python](https://img.shields.io/badge/Python-3.9+-green)
-![Flask](https://img.shields.io/badge/Flask-2.3+-orange)
+---
 
-## 주요 기능
+## ✨ 주요 특징
 
-- ⚡ **빠른 변환**: 병렬 처리로 여러 파일 동시 변환 (최대 5개)
-- 📄 **다중 파일 지원**: 여러 HWP 파일을 한번에 업로드
-- 🎨 **모던한 UI**: 드래그 앤 드롭, 반응형 디자인
-- 🔒 **안전한 처리**: 파일은 서버에 저장되지 않고 즉시 처리 후 삭제
-- 💾 **간편한 저장**: 변환된 파일을 바로 다운로드하거나 클립보드에 복사
-- 🌐 **완전 로컬**: 외부 API 없이 로컬에서 처리
+1. **3단계 강력한 Fallback 변환 엔진**
+   - **1단계 (`hwp5txt`)**: `pyhwp` 라이브러리를 사용하여 원본 문서 레이아웃과 텍스트를 가장 완벽하게 추출합니다.
+   - **2단계 (`olefile` 직접 파싱)**: 1단계 실패 시 OLE 바이너리 구조를 직접 압축 해제(`zlib`) 및 파싱하여 본문 텍스트를 끝까지 복원합니다.
+   - **3단계 (Python strings 파서)**: 최후의 보루로서 2바이트 UTF-16LE 바이트 스트림을 한 글자씩 스캔하여 한글 텍스트만 안전하게 추출합니다.
 
-## 스크린샷
+2. **목회용 커스텀 마크다운 변환 규칙**
+   - **성경 구절 인용구 변환**: 한글 성경 약어 패턴(예: `창 1:1`, `마 3장 16절` 등)을 감지하여 옵시디언 인용블록(`> `)으로 자동 변경합니다.
+   - **문단 제목(Heading) 생성**: 30자 미만의 짧은 문장 중 마침표(`.`)나 한국어 문장 결미어(`다`, `요`, `니다` 등)로 끝나지 않는 줄을 `## 제목`으로 자동 승격합니다.
+   - **목록(List) 기호 일치**: `•`, `·`, `▶` 등의 특수 목록 기호를 마크다운 표준 목록인 `- `로 자동 정렬합니다.
+   - **빈 줄 정리**: 가독성을 위해 본문 내에 불필요하게 겹쳐진 연속된 빈 줄을 1개의 빈 줄로 압축합니다.
+   - **Frontmatter 메타데이터**: 문서 최상단에 원본 파일명, 추출 방식, 변환 날짜를 YAML 형식으로 기록합니다.
 
-### 메인 화면
-![Main Screen](screenshot-main.png)
+3. **편리한 로컬 대시보드 UI**
+   - **멀티프로세싱**: 최대 8개의 워커(Workers)로 대량의 한글 파일을 한 번에 변환합니다.
+   - **실시간 스트리밍**: 파일 개수와 변환 성공/실패/건너뜀 여부를 대시보드의 실시간 터미널 피드를 통해 즉시 확인할 수 있습니다.
+   - **옵시디언 연동**: 변환이 끝난 뒤 버튼 클릭 하나로 변환된 보관소 폴더를 탐색기나 Finder 창으로 직접 엽니다.
 
-### 변환 결과
-![Result Screen](screenshot-result.png)
+---
 
-## 설치 및 실행
+## ⚙️ 실행 전 준비사항 (최초 1회)
 
-### 1. 필수 요구사항
+이 프로그램은 **파이썬(Python 3)**을 사용하여 작동합니다. 컴퓨터에 파이썬이 설치되어 있지 않다면 먼저 설치해 주세요.
 
-- Python 3.9 이상
-- pip (Python 패키지 관리자)
+- [Python 3 공식 다운로드 페이지](https://www.python.org/downloads/)
+- **Windows 사용자**: 설치 설치 창 하단의 **[Add Python to PATH]** 체크박스를 반드시 체크하고 설치하셔야 합니다.
+- **macOS 사용자**: 터미널에서 `python3`을 입력하시거나 실행기를 실행할 때 Xcode 명령줄 도구 설치 팝업이 나타날 수 있으니 승인하여 설치해 주시면 됩니다.
 
-### 2. 의존성 설치
+---
 
-```bash
-pip install -r requirements.txt
+## 🚀 사용 방법
+
+### 1. 다운로드 및 압축 해제
+이 저장소 상단의 **[Code]** 초록색 버튼 클릭 -> **[Download ZIP]**을 눌러 다운로드한 뒤 원하는 폴더에 압축을 풉니다.
+
+### 2. 더블클릭 실행
+자신의 운영체제(OS)에 맞는 실행 파일을 **더블클릭**합니다.
+- **macOS**: `run.command` 파일을 더블클릭합니다.
+  > 💡 **macOS 최초 실행 시 보안 경고 해결법**
+  > 인터넷에서 직접 받은 파일이므로 macOS 보안 정책에 의해 실행이 차단될 수 있습니다.
+  > 1. `run.command` 파일 위에서 마우스 **우클릭** (또는 트랙패드 두 손가락 클릭)
+  > 2. **[열기 (Open)]** 메뉴 선택
+  > 3. 경고창이 나타나면 다시 한번 **[열기]** 버튼 클릭
+- **Windows**: `run.bat` 파일을 더블클릭합니다.
+
+이후 자동으로 터미널/명령 프롬프트 창이 열리며, 변환에 필요한 파이썬 모듈(`Flask`, `pyhwp`, `olefile` 등)을 최초 1회 다운로드하고 **로컬 서버(http://localhost:5001)가 즉시 열립니다.**
+
+### 3. 변환기 조작
+1. **[한글 파일(HWP) 폴더 경로]**: 변환할 한글 파일들이 보관된 컴퓨터의 절대 경로를 입력합니다.
+2. **[Obsidian 보관소(Vault) 저장 경로]**: 변환 결과물(.md)을 저장할 옵시디언 폴더의 절대 경로를 지정합니다.
+3. **[파일 목록 확인]** 버튼을 눌러 스캔된 파일의 개수와 리스트를 확인합니다.
+4. **[변환 시작]**을 누르면 변환이 진행되며 결과 리포트를 받아볼 수 있습니다.
+
+### 4. 종료 방법
+실행 중인 검은색 터미널/명령 프롬프트 창을 닫거나, 창에서 **`Ctrl + C`**를 누르면 안전하게 백엔드 서버가 종료됩니다.
+
+---
+
+## 🛠️ 저장소 구조
+```text
+├── app.py              # Flask 백엔드 서버 & HWP 3단계 파싱 소스코드
+├── index.html          # 단일 파일 형태의 웹 UI 대시보드
+├── run.command         # macOS 원클릭 자동 실행 스크립트
+├── run.bat             # Windows 원클릭 자동 실행 배치 파일
+├── readme.txt          # 오프라인용 plain text 설명서
+└── README.md           # 온라인(GitHub)용 설명서
 ```
 
-또는
+---
 
-```bash
-pip install flask pyhwp
-```
-
-### 3. 서버 실행
-
-```bash
-python3 app.py
-```
-
-서버가 시작되면 브라우저에서 다음 주소로 접속:
-
-```
-http://localhost:8080
-```
-
-## 사용 방법
-
-1. **파일 업로드**
-   - HWP 파일을 드래그 앤 드롭하거나
-   - "파일 선택" 버튼을 클릭하여 업로드
-   - 여러 파일을 동시에 선택 가능
-
-2. **자동 변환**
-   - 업로드된 파일이 자동으로 마크다운으로 변환됩니다
-   - 여러 파일은 병렬로 처리되어 빠르게 완료
-
-3. **결과 저장**
-   - "다운로드" 버튼: 변환된 .md 파일 저장
-   - "복사" 버튼: 마크다운 텍스트를 클립보드에 복사
-
-## 기술 스택
-
-### Backend
-- **Flask**: Python 웹 프레임워크
-- **pyhwp**: HWP 파일 파싱 라이브러리
-- **ThreadPoolExecutor**: 병렬 처리
-
-### Frontend
-- **HTML5/CSS3**: 모던 UI
-- **JavaScript (ES6+)**: 파일 업로드 및 API 통신
-- **Fetch API**: 비동기 HTTP 요청
-
-## 프로젝트 구조
-
-```
-.
-├── app.py              # Flask 백엔드 서버
-├── hwp_to_markdown.py  # CLI 버전 (독립 실행 가능)
-├── index.html          # 메인 페이지
-├── style.css           # 스타일시트
-├── script.js           # 프론트엔드 로직
-├── requirements.txt    # Python 의존성
-└── README.md          # 프로젝트 문서
-```
-
-## 제한 사항
-
-- **파일 크기**: 개별 파일 최대 10MB, 총 요청 최대 50MB
-- **동시 처리**: 최대 5개 파일 병렬 처리
-- **지원 형식**: HWP 5.x 형식
-- **추출 제한**: 기본 텍스트 추출 (이미지, 표, 복잡한 서식 제한적)
-
-## CLI 버전 사용법
-
-웹 인터페이스 없이 커맨드라인에서도 사용 가능:
-
-```bash
-# 기본 사용
-python hwp_to_markdown.py document.hwp
-
-# 출력 파일 지정
-python hwp_to_markdown.py document.hwp -o output.md
-
-# 표준출력으로 출력
-python hwp_to_markdown.py document.hwp --stdout
-```
-
-## 개발
-
-### 로컬 개발 환경 설정
-
-```bash
-# 저장소 클론
-git clone https://github.com/yourusername/hwp-to-markdown.git
-cd hwp-to-markdown
-
-# 가상환경 생성 (선택사항)
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 의존성 설치
-pip install -r requirements.txt
-
-# 개발 서버 실행
-python3 app.py
-```
-
-### 프로덕션 배포
-
-프로덕션 환경에서는 Gunicorn 또는 uWSGI 사용 권장:
-
-```bash
-# Gunicorn 설치
-pip install gunicorn
-
-# 서버 실행
-gunicorn -w 4 -b 0.0.0.0:8080 app:app
-```
-
-## 문제 해결
-
-### HWP 파일이 변환되지 않을 때
-
-1. HWP 5.x 형식인지 확인
-2. 파일이 손상되지 않았는지 확인
-3. 파일 크기가 제한을 초과하지 않는지 확인
-
-### 한글이 깨질 때
-
-- `pyhwp` 라이브러리가 제대로 설치되었는지 확인
-- Python 3.9 이상 버전 사용 권장
-
-## 라이선스
-
-MIT License
-
-## 기여
-
-기여는 언제나 환영합니다!
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 작성자
-
-Created with Claude Code
-
-## 변경 이력
-
-### v1.0.0 (2025-10-02)
-- 초기 릴리스
-- 웹 인터페이스 구현
-- 병렬 처리 지원
-- CLI 도구 포함
+## 📝 라이선스 및 크레딧
+- 제작: 라온동행교회 쉬운목사 (자비스 자동화 시스템)
+- 피드백이나 문의사항은 Issue 탭 혹은 교회로 문의해주세요.
