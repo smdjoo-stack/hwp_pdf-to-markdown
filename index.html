@@ -1015,10 +1015,11 @@
                         const statusData = await statusRes.json();
                         if (statusData.authenticated) {
                             clearInterval(interval);
-                            checkOAuthStatus();
+                            await checkOAuthStatus();
+                            alert("구글 계정이 성공적으로 연동되었습니다!");
                         } else if (statusData.error || attempts > 150) {
                             clearInterval(interval);
-                            checkOAuthStatus();
+                            await checkOAuthStatus();
                         }
                     } catch (err) {
                         console.error(err);
