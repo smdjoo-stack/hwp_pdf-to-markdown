@@ -1,0 +1,6 @@
+venv/
+*.log
+.DS_Store
+__pycache__/
+*.zip
+gemini_token.json
