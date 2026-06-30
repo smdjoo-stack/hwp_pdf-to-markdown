@@ -43,6 +43,10 @@ Thumbs.db
 *.log
 get-pip.py
 
+# Secrets (OAuth 토큰 등 시크릿 커밋 금지)
+gemini_token.json
+*.token.json
+
 # HWP files (don't commit test files)
 *.hwp
 *.md

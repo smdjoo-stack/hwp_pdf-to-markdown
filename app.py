@@ -645,6 +645,7 @@ class CallbackServerThread(threading.Thread):
         try:
             self.server = HTTPServer(('127.0.0.1', 8085), Handler)
             self.server.expected_state = self.expected_state
+            self.server.on_code_received = self.on_code_received
             self.server.timeout = 300
             self.server.serve_forever()
         except Exception as e:
@@ -1733,7 +1734,7 @@ def oauth_start():
                 # Save to gemini_token.json
                 token_data = {
                     "access_token": res["access_token"],
-                    "refresh_token": res["refresh_token"],
+                    "refresh_token": res.get("refresh_token", ""),
                     "expires_at": time.time() + res.get("expires_in", 3600),
                     "email": email
                 }
@@ -1742,10 +1743,14 @@ def oauth_start():
                     json.dump(token_data, f, ensure_ascii=False, indent=2)
                 
                 oauth_session["email"] = email
-                oauth_session["success"] = True
-                
+
                 # Onboard project immediately
-                ensure_gemini_project_id(res["access_token"])
+                project_id = ensure_gemini_project_id(res["access_token"])
+                if not project_id:
+                    oauth_session["error"] = "Google 계정 인증은 완료되었으나, Gemini 프로젝트 ID를 가져오지 못했습니다. Gemini Advanced 구독 여부를 확인하거나 잠시 후 다시 시도해 주세요."
+                    return
+
+                oauth_session["success"] = True
                 
             except Exception as e:
                 print(f"Token exchange error: {e}", file=sys.stderr)
